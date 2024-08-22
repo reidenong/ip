@@ -5,9 +5,10 @@ public class Barry {
     private boolean alive;
     private ArrayList<Task> tasks;
 
-    private class Task {
-        private boolean completed;
-        private String description;
+    // Base Task class
+    private abstract class Task {
+        protected boolean completed;
+        protected String description;
 
         public Task(String description) {
             this.description = description;
@@ -30,9 +31,52 @@ public class Barry {
             String output = (this.completed ? "[X] " : "[ ] ");
             return output + this.description;
         }
-
     }
-    
+
+    // TodoTask subclass
+    private class TodoTask extends Task {
+        public TodoTask(String description) {
+            super(description);
+        }
+
+        @Override
+        public String toString() {
+            return "[T]" + super.toString();
+        }
+    }
+
+    // DeadlineTask subclass
+    private class DeadlineTask extends Task {
+        private String by;
+
+        public DeadlineTask(String description, String by) {
+            super(description);
+            this.by = by;
+        }
+
+        @Override
+        public String toString() {
+            return "[D]" + super.toString() + " (by: " + this.by + ")";
+        }
+    }
+
+    // EventTask subclass
+    private class EventTask extends Task {
+        private String from;
+        private String to;
+
+        public EventTask(String description, String from, String to) {
+            super(description);
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        public String toString() {
+            return "[E]" + super.toString() + " (from: " + this.from + " to: " + this.to + ")";
+        }
+    }
+
     public Barry() {
         this.alive = false;
         this.tasks = new ArrayList<>();
@@ -78,13 +122,45 @@ public class Barry {
             return;
         }
 
+        if (input.startsWith("todo")) {
+            this.action("addTodo", input.substring(5));
+            return;
+        }
+
+        if (input.startsWith("deadline")) {
+            String[] parts = input.substring(9).split(" /by ");
+            this.action("addDeadline", parts[0] + "|" + parts[1]);
+            return;
+        }
+
+        if (input.startsWith("event")) {
+            String[] parts = input.substring(6).split(" /from ");
+            String[] timeParts = parts[1].split(" /to ");
+            this.action("addEvent", parts[0] + "|" + timeParts[0] + "|" + timeParts[1]);
+            return;
+        }
+
         this.action("addtask", input);
     }
 
     private void action(String command, String data) {
-        if (command.equals("addtask")) {
-            this.tasks.add(new Task(data));
-            this.speak("task added: " + data, true);
+        if (command.equals("addTodo")) {
+            this.tasks.add(new TodoTask(data));
+            this.speak("Got it. I've added this task:\n" + new TodoTask(data), true);
+            return;
+        }
+
+        if (command.equals("addDeadline")) {
+            String[] parts = data.split("\\|");
+            this.tasks.add(new DeadlineTask(parts[0], parts[1]));
+            this.speak("Got it. I've added this task:\n" + new DeadlineTask(parts[0], parts[1]), true);
+            return;
+        }
+
+        if (command.equals("addEvent")) {
+            String[] parts = data.split("\\|");
+            this.tasks.add(new EventTask(parts[0], parts[1], parts[2]));
+            this.speak("Got it. I've added this task:\n" + new EventTask(parts[0], parts[1], parts[2]), true);
             return;
         }
 
@@ -112,10 +188,6 @@ public class Barry {
             return;
         }
     }
-
-
-
-
 
     public static void main(String[] args) {
         Scanner s = new Scanner(System.in);
