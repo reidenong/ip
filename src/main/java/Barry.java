@@ -22,10 +22,6 @@ public class Barry {
             this.completed = false;
         }
 
-        public boolean isDone() {
-            return this.completed;
-        }
-
         @Override
         public String toString() {
             String output = (this.completed ? "[X] " : "[ ] ");
@@ -147,6 +143,12 @@ public class Barry {
                 return;
             }
 
+            if (input.startsWith("delete")) {
+                if (input.length() < 8) throw new BarryException("OOPS!!! The task number to delete cannot be empty.");
+                this.action("delete", input.substring(7).trim());
+                return;
+            }
+
             throw new BarryException("OOPS!!! I'm sorry, but I don't know what that means :-(");
         } catch (BarryException e) {
             this.speak(e.getMessage(), true);
@@ -201,6 +203,15 @@ public class Barry {
                     this.speak((i + 1) + ". " + this.tasks.get(i).toString(), i == N - 1);
                 }
             }
+            return;
+        }
+
+        if (command.equals("delete")) {
+            int idx = Integer.parseInt(data) - 1;
+            if (idx < 0 || idx >= this.tasks.size()) throw new BarryException("OOPS!!! Task number is out of range.");
+            Task removedTask = this.tasks.remove(idx);
+            this.speak("Noted. I've removed this task:\n" + removedTask, true);
+            this.speak("Now you have " + this.tasks.size() + " tasks in the list.", true);
             return;
         }
     }
