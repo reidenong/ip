@@ -1,4 +1,7 @@
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -43,27 +46,28 @@ public class Barry {
         }
     }
 
-    // DeadlineTask subclass
+    // DeadlineTask subclass with LocalDateTime
     private class DeadlineTask extends Task {
-        private String by;
+        private LocalDateTime by;
 
-        public DeadlineTask(String description, String by) {
+        public DeadlineTask(String description, LocalDateTime by) {
             super(description);
             this.by = by;
         }
 
         @Override
         public String toString() {
-            return "[D]" + super.toString() + " (by: " + this.by + ")";
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mm a");
+            return "[D]" + super.toString() + " (by: " + this.by.format(formatter) + ")";
         }
     }
 
-    // EventTask subclass
+    // EventTask subclass with LocalDateTime
     private class EventTask extends Task {
-        private String from;
-        private String to;
+        private LocalDateTime from;
+        private LocalDateTime to;
 
-        public EventTask(String description, String from, String to) {
+        public EventTask(String description, LocalDateTime from, LocalDateTime to) {
             super(description);
             this.from = from;
             this.to = to;
@@ -71,7 +75,8 @@ public class Barry {
 
         @Override
         public String toString() {
-            return "[E]" + super.toString() + " (from: " + this.from + " to: " + this.to + ")";
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mm a");
+            return "[E]" + super.toString() + " (from: " + this.from.format(formatter) + " to: " + this.to.format(formatter) + ")";
         }
     }
 
@@ -133,7 +138,8 @@ public class Barry {
             if (input.startsWith("deadline")) {
                 String[] parts = input.substring(9).split(" /by ");
                 if (parts.length < 2) throw new BarryException("OOPS!!! The deadline format is incorrect.");
-                this.action("addDeadline", parts[0].trim() + "|" + parts[1].trim());
+                LocalDateTime deadlineTime = parseDateTime(parts[1].trim());
+                this.action("addDeadline", parts[0].trim() + "|" + deadlineTime);
                 return;
             }
 
@@ -142,7 +148,9 @@ public class Barry {
                 if (parts.length < 2) throw new BarryException("OOPS!!! The event format is incorrect.");
                 String[] timeParts = parts[1].split(" /to ");
                 if (timeParts.length < 2) throw new BarryException("OOPS!!! The event time format is incorrect.");
-                this.action("addEvent", parts[0].trim() + "|" + timeParts[0].trim() + "|" + timeParts[1].trim());
+                LocalDateTime fromTime = parseDateTime(timeParts[0].trim());
+                LocalDateTime toTime = parseDateTime(timeParts[1].trim());
+                this.action("addEvent", parts[0].trim() + "|" + fromTime + "|" + toTime);
                 return;
             }
 
@@ -158,6 +166,15 @@ public class Barry {
         }
     }
 
+    private LocalDateTime parseDateTime(String dateTimeString) throws BarryException {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+            return LocalDateTime.parse(dateTimeString, formatter);
+        } catch (DateTimeParseException e) {
+            throw new BarryException("OOPS!!! The date and time format is incorrect. Please use d/M/yyyy HHmm format.");
+        }
+    }
+
     private void action(String command, String data) throws BarryException {
         if (command.equals("addTodo")) {
             this.tasks.add(new TodoTask(data));
@@ -168,16 +185,19 @@ public class Barry {
 
         if (command.equals("addDeadline")) {
             String[] parts = data.split("\\|");
-            this.tasks.add(new DeadlineTask(parts[0], parts[1]));
-            this.speak("Got it. I've added this task:\n" + new DeadlineTask(parts[0], parts[1]), true);
+            LocalDateTime by = LocalDateTime.parse(parts[1]);
+            this.tasks.add(new DeadlineTask(parts[0], by));
+            this.speak("Got it. I've added this task:\n" + new DeadlineTask(parts[0], by), true);
             saveTasksToFile(); // Save after adding a task
             return;
         }
 
         if (command.equals("addEvent")) {
             String[] parts = data.split("\\|");
-            this.tasks.add(new EventTask(parts[0], parts[1], parts[2]));
-            this.speak("Got it. I've added this task:\n" + new EventTask(parts[0], parts[1], parts[2]), true);
+            LocalDateTime from = LocalDateTime.parse(parts[1]);
+            LocalDateTime to = LocalDateTime.parse(parts[2]);
+            this.tasks.add(new EventTask(parts[0], from, to));
+            this.speak("Got it. I've added this task:\n" + new EventTask(parts[0], from, to), true);
             saveTasksToFile(); // Save after adding a task
             return;
         }
@@ -261,11 +281,11 @@ public class Barry {
                 if (type.equals("T")) {
                     task = new TodoTask(description);
                 } else if (type.equals("D")) {
-                    String by = parts[3];
+                    LocalDateTime by = LocalDateTime.parse(parts[3]);
                     task = new DeadlineTask(description, by);
                 } else if (type.equals("E")) {
-                    String from = parts[3];
-                    String to = parts[4];
+                    LocalDateTime from = LocalDateTime.parse(parts[3]);
+                    LocalDateTime to = LocalDateTime.parse(parts[4]);
                     task = new EventTask(description, from, to);
                 } else {
                     continue;
