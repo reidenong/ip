@@ -2,6 +2,7 @@ package barry;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 /**
  * Represents a command that can be executed in the Barry application.
@@ -256,6 +257,37 @@ public interface Command {
             tasks.removeTask(index);
             ui.showMessage("Noted. I've removed this task:\n" + task);
             storage.save(tasks.getTasks());
+        }
+
+        @Override
+        public boolean isExit() {
+            return false;
+        }
+    }
+
+    /**
+     * Represents the command to find a task.
+     */
+    public static class FindCommand implements Command {
+        private String searchTerm;
+
+        /**
+         * Constructs a FindCommand with the specified search term
+         *
+         * @param term The term to be searched
+         */
+        public FindCommand(String term) {
+            this.searchTerm = term;
+        }
+
+        @Override
+        public void execute(TaskList tasks, Ui ui, Storage storage) throws BarryException, IOException {
+            ArrayList<Task> answer  = tasks.findTasks(this.searchTerm);
+            String message = "I've found the following tasks with your given searchterm:\n";
+            for (Task task : answer) {
+                message += task.toString() + "\n";
+            }
+            ui.showMessage(message);
         }
 
         @Override

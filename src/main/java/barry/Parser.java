@@ -33,6 +33,8 @@ public class Parser {
                 return new Command.UnmarkCommand(Integer.parseInt(arguments));
             case "todo":
                 return new Command.AddTodoCommand(arguments);
+            case "find":
+                return new Command.FindCommand(arguments);
             case "deadline":
                 String[] deadlineParts = arguments.split(" /by ");
                 if (deadlineParts.length < 2) throw new BarryException("The deadline format is incorrect.");

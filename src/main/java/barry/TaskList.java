@@ -83,6 +83,16 @@ public class TaskList {
         task.unmark();
     }
 
+    public ArrayList<Task> findTasks(String searchTerm) {
+        ArrayList<Task> output = new ArrayList<>();
+        for (Task task : this.tasks) {
+            if (task.getDescription().contains(searchTerm)) {
+                output.add(task);
+            }
+        }
+        return output;
+    }
+
     public boolean isEmpty() {
         return tasks.isEmpty();
     }
