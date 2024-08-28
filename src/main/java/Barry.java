@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -12,6 +13,7 @@ public class Barry {
 
         public Task(String description) {
             this.description = description;
+            this.completed = false;
         }
 
         public void mark() {
@@ -76,6 +78,7 @@ public class Barry {
     public Barry() {
         this.alive = false;
         this.tasks = new ArrayList<>();
+        loadTasksFromFile(); // Load tasks from file on startup
     }
 
     public void startup() {
@@ -159,6 +162,7 @@ public class Barry {
         if (command.equals("addTodo")) {
             this.tasks.add(new TodoTask(data));
             this.speak("Got it. I've added this task:\n" + new TodoTask(data), true);
+            saveTasksToFile(); // Save after adding a task
             return;
         }
 
@@ -166,6 +170,7 @@ public class Barry {
             String[] parts = data.split("\\|");
             this.tasks.add(new DeadlineTask(parts[0], parts[1]));
             this.speak("Got it. I've added this task:\n" + new DeadlineTask(parts[0], parts[1]), true);
+            saveTasksToFile(); // Save after adding a task
             return;
         }
 
@@ -173,6 +178,7 @@ public class Barry {
             String[] parts = data.split("\\|");
             this.tasks.add(new EventTask(parts[0], parts[1], parts[2]));
             this.speak("Got it. I've added this task:\n" + new EventTask(parts[0], parts[1], parts[2]), true);
+            saveTasksToFile(); // Save after adding a task
             return;
         }
 
@@ -182,6 +188,7 @@ public class Barry {
             this.tasks.get(idx).mark();
             this.speak("I've marked this task as done:", false);
             this.speak(this.tasks.get(idx).toString(), true);
+            saveTasksToFile(); // Save after marking a task
             return;
         }
 
@@ -191,6 +198,7 @@ public class Barry {
             this.tasks.get(idx).unmark();
             this.speak("I've unmarked this task:", false);
             this.speak(this.tasks.get(idx).toString(), true);
+            saveTasksToFile(); // Save after unmarking a task
             return;
         }
 
@@ -212,7 +220,72 @@ public class Barry {
             Task removedTask = this.tasks.remove(idx);
             this.speak("Noted. I've removed this task:\n" + removedTask, true);
             this.speak("Now you have " + this.tasks.size() + " tasks in the list.", true);
+            saveTasksToFile(); // Save after deleting a task
             return;
+        }
+    }
+
+    private void saveTasksToFile() {
+        ensureDataDirectoryExists(); // Ensure directory exists
+        try (PrintWriter writer = new PrintWriter(new FileWriter("./data/barry.txt"))) {
+            for (Task task : tasks) {
+                if (task instanceof TodoTask) {
+                    writer.println("T | " + (task.completed ? "1" : "0") + " | " + task.description);
+                } else if (task instanceof DeadlineTask) {
+                    DeadlineTask deadlineTask = (DeadlineTask) task;
+                    writer.println("D | " + (task.completed ? "1" : "0") + " | " + task.description + " | " + deadlineTask.by);
+                } else if (task instanceof EventTask) {
+                    EventTask eventTask = (EventTask) task;
+                    writer.println("E | " + (task.completed ? "1" : "0") + " | " + task.description + " | " + eventTask.from + " | " + eventTask.to);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving tasks to file: " + e.getMessage());
+        }
+    }
+
+    private void loadTasksFromFile() {
+        File file = new File("./data/barry.txt");
+        if (!file.exists()) {
+            return; // No file to load from
+        }
+
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                String[] parts = scanner.nextLine().split(" \\| ");
+                String type = parts[0];
+                boolean isCompleted = parts[1].equals("1");
+                String description = parts[2];
+
+                Task task;
+                if (type.equals("T")) {
+                    task = new TodoTask(description);
+                } else if (type.equals("D")) {
+                    String by = parts[3];
+                    task = new DeadlineTask(description, by);
+                } else if (type.equals("E")) {
+                    String from = parts[3];
+                    String to = parts[4];
+                    task = new EventTask(description, from, to);
+                } else {
+                    continue;
+                }
+
+                if (isCompleted) {
+                    task.mark();
+                }
+
+                tasks.add(task);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred while loading tasks from file: " + e.getMessage());
+        }
+    }
+
+    private void ensureDataDirectoryExists() {
+        File directory = new File("./data");
+        if (!directory.exists()) {
+            directory.mkdir();
         }
     }
 
@@ -227,5 +300,12 @@ public class Barry {
             barry.parseInput(input);
         }
         s.close();
+    }
+
+    // Exception class for Barry
+    private class BarryException extends Exception {
+        public BarryException(String message) {
+            super(message);
+        }
     }
 }
