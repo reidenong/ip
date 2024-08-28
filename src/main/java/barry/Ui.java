@@ -1,6 +1,9 @@
 package barry;
 import java.util.Scanner;
 
+/**
+ * The Ui class manages the User Command line interface that the user uses to communicate with Barry.
+ */
 public class Ui {
     private Scanner scanner;
 

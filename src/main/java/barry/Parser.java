@@ -1,9 +1,22 @@
 package barry;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * The Parser class is responsible for interpreting user input and converting it into executable commands.
+ * It parses different types of user commands and provides the appropriate Command object to be executed.
+ */
 public class Parser {
+
+    /**
+     * Parses the user input and returns the corresponding Command object.
+     *
+     * @param input The user input string to parse.
+     * @return The Command object that corresponds to the user's input.
+     * @throws BarryException If the input does not correspond to any known command, or if there is an error in the input format.
+     */
     public static Command parse(String input) throws BarryException {
         String[] parts = input.split(" ", 2);
         String commandWord = parts[0];
@@ -40,6 +53,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses a date and time string in the format "d/M/yyyy HHmm" and converts it to a LocalDateTime object.
+     *
+     * @param dateTimeString The string representing the date and time.
+     * @return A LocalDateTime object representing the parsed date and time.
+     * @throws BarryException If the input string is not in the correct format.
+     */
     private static LocalDateTime parseDateTime(String dateTimeString) throws BarryException {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");

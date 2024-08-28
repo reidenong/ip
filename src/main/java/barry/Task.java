@@ -1,12 +1,21 @@
 package barry;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-// Base Task class
+/**
+ * The Task class represents a general task with a description and completion status.
+ * This is an abstract base class for specific types of tasks, such as TodoTask, DeadlineTask, and EventTask.
+ */
 abstract class Task {
     protected boolean completed;
     protected String description;
 
+    /**
+     * Constructs a Task with the specified description.
+     *
+     * @param description The description of the task.
+     */
     public Task(String description) {
         this.description = description;
         this.completed = false;
@@ -34,8 +43,16 @@ abstract class Task {
         return output + this.description;
     }
 
-    // TodoTask subclass
+    /**
+     * Represents a Todo task that needs to be done, without any specific time constraints.
+     */
     static class TodoTask extends Task {
+
+        /**
+         * Constructs a TodoTask with the specified description.
+         *
+         * @param description The description of the todo task.
+         */
         public TodoTask(String description) {
             super(description);
         }
@@ -46,10 +63,18 @@ abstract class Task {
         }
     }
 
-    // DeadlineTask subclass with LocalDateTime
+    /**
+     * Represents a Deadline task that has a specific due date and time.
+     */
     static class DeadlineTask extends Task {
         private LocalDateTime by;
 
+        /**
+         * Constructs a DeadlineTask with the specified description and due date.
+         *
+         * @param description The description of the deadline task.
+         * @param by The LocalDateTime by which the task is due.
+         */
         public DeadlineTask(String description, LocalDateTime by) {
             super(description);
             this.by = by;
@@ -66,11 +91,20 @@ abstract class Task {
         }
     }
 
-    // EventTask subclass with LocalDateTime
+    /**
+     * Represents an Event task that occurs at a specific time interval.
+     */
     static class EventTask extends Task {
         private LocalDateTime from;
         private LocalDateTime to;
 
+        /**
+         * Constructs an EventTask with the specified description, start time, and end time.
+         *
+         * @param description The description of the event task.
+         * @param from The start time of the event.
+         * @param to The end time of the event.
+         */
         public EventTask(String description, LocalDateTime from, LocalDateTime to) {
             super(description);
             this.from = from;
