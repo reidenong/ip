@@ -10,17 +10,17 @@ import java.util.ArrayList;
  * unmarking tasks, and deleting tasks.
  */
 public interface Command {
-    
+
     /**
      * Executes the command using the provided task list, UI, and storage.
      *
-     * @param tasks The TaskList to execute the command on.
-     * @param ui The Ui instance for user interaction.
+     * @param tasks   The TaskList to execute the command on.
+     * @param ui      The Ui instance for user interaction.
      * @param storage The Storage instance for saving/loading tasks.
      * @throws BarryException If there is an error in the task operations.
-     * @throws IOException If there is an error in input/output operations.
+     * @throws IOException    If there is an error in input/output operations.
      */
-    void execute(TaskList tasks, Ui ui, Storage storage) throws BarryException, IOException;
+    String execute(TaskList tasks, Ui ui, Storage storage) throws BarryException, IOException;
 
     /**
      * Checks if the command is an exit command.
@@ -33,15 +33,16 @@ public interface Command {
      * Represents the command to exit the Barry application.
      */
     public static class ExitCommand implements Command {
-        
+
         /**
          * Constructs an ExitCommand.
          */
-        public ExitCommand() {}
+        public ExitCommand() {
+        }
 
         @Override
-        public void execute(TaskList tasks, Ui ui, Storage storage) {
-            ui.showGoodbyeMessage();
+        public String execute(TaskList tasks, Ui ui, Storage storage) {
+            return ui.showGoodbyeMessage();
         }
 
         @Override
@@ -54,16 +55,17 @@ public interface Command {
      * Represents the command to list all tasks in the task list.
      */
     public static class ListCommand implements Command {
-        
+
         /**
          * Constructs a ListCommand.
          */
-        public ListCommand() {}
+        public ListCommand() {
+        }
 
         @Override
-        public void execute(TaskList tasks, Ui ui, Storage storage) {
+        public String execute(TaskList tasks, Ui ui, Storage storage) {
             if (tasks.isEmpty()) {
-                ui.showMessage("There are no tasks in your list.");
+                return ui.showMessage("There are no tasks in your list.");
             } else {
                 int N = tasks.size();
                 String message = "";
@@ -71,10 +73,10 @@ public interface Command {
                     try {
                         message += ((i + 1) + ". " + tasks.getTask(i).toString()) + "\n";
                     } catch (BarryException e) {
-                        ui.showMessage("Error retrieving task: " + e.getMessage());
+                        return ui.showMessage("Error retrieving task: " + e.getMessage());
                     }
                 }
-                ui.showMessage(message);
+                return ui.showMessage(message);
             }
         }
 
@@ -100,10 +102,10 @@ public interface Command {
         }
 
         @Override
-        public void execute(TaskList tasks, Ui ui, Storage storage) throws BarryException, IOException {
+        public String execute(TaskList tasks, Ui ui, Storage storage) throws BarryException, IOException {
             tasks.markTask(index);
-            ui.showMessage("I've marked this task as done:\n" + tasks.getTask(index).toString());
             storage.save(tasks.getTasks());
+            return ui.showMessage("I've marked this task as done:\n" + tasks.getTask(index).toString());
         }
 
         @Override
@@ -128,10 +130,11 @@ public interface Command {
         }
 
         @Override
-        public void execute(TaskList tasks, Ui ui, Storage storage) throws BarryException, IOException {
+        public String execute(TaskList tasks, Ui ui, Storage storage) throws BarryException, IOException {
             tasks.unmarkTask(index);
-            ui.showMessage("I've unmarked this task:\n" + tasks.getTask(index).toString());
             storage.save(tasks.getTasks());
+            return ui.showMessage("I've unmarked this task:\n" + tasks.getTask(index).toString());
+
         }
 
         @Override
@@ -156,11 +159,12 @@ public interface Command {
         }
 
         @Override
-        public void execute(TaskList tasks, Ui ui, Storage storage) throws IOException {
+        public String execute(TaskList tasks, Ui ui, Storage storage) throws IOException {
             Task.TodoTask task = new Task.TodoTask(description);
             tasks.addTask(task);
-            ui.showMessage("Got it. I've added this task:\n" + task);
             storage.save(tasks.getTasks());
+            return ui.showMessage("Got it. I've added this task:\n" + task);
+
         }
 
         @Override
@@ -177,10 +181,11 @@ public interface Command {
         private LocalDateTime by;
 
         /**
-         * Constructs an AddDeadlineCommand with the specified task description and due date.
+         * Constructs an AddDeadlineCommand with the specified task description and due
+         * date.
          *
          * @param description The description of the deadline task.
-         * @param by The due date of the deadline task.
+         * @param by          The due date of the deadline task.
          */
         public AddDeadlineCommand(String description, LocalDateTime by) {
             this.description = description;
@@ -188,11 +193,12 @@ public interface Command {
         }
 
         @Override
-        public void execute(TaskList tasks, Ui ui, Storage storage) throws IOException {
+        public String execute(TaskList tasks, Ui ui, Storage storage) throws IOException {
             Task.DeadlineTask task = new Task.DeadlineTask(description, by);
             tasks.addTask(task);
-            ui.showMessage("Got it. I've added this task:\n" + task);
             storage.save(tasks.getTasks());
+            return ui.showMessage("Got it. I've added this task:\n" + task);
+
         }
 
         @Override
@@ -210,11 +216,12 @@ public interface Command {
         private LocalDateTime to;
 
         /**
-         * Constructs an AddEventCommand with the specified task description, start time, and end time.
+         * Constructs an AddEventCommand with the specified task description, start
+         * time, and end time.
          *
          * @param description The description of the event task.
-         * @param from The start time of the event.
-         * @param to The end time of the event.
+         * @param from        The start time of the event.
+         * @param to          The end time of the event.
          */
         public AddEventCommand(String description, LocalDateTime from, LocalDateTime to) {
             this.description = description;
@@ -223,11 +230,11 @@ public interface Command {
         }
 
         @Override
-        public void execute(TaskList tasks, Ui ui, Storage storage) throws IOException {
+        public String execute(TaskList tasks, Ui ui, Storage storage) throws IOException {
             Task.EventTask task = new Task.EventTask(description, from, to);
             tasks.addTask(task);
-            ui.showMessage("Got it. I've added this task:\n" + task);
             storage.save(tasks.getTasks());
+            return ui.showMessage("Got it. I've added this task:\n" + task);
         }
 
         @Override
@@ -252,11 +259,12 @@ public interface Command {
         }
 
         @Override
-        public void execute(TaskList tasks, Ui ui, Storage storage) throws BarryException, IOException {
+        public String execute(TaskList tasks, Ui ui, Storage storage) throws BarryException, IOException {
             Task task = tasks.getTask(index);
             tasks.removeTask(index);
-            ui.showMessage("Noted. I've removed this task:\n" + task);
             storage.save(tasks.getTasks());
+            return ui.showMessage("Noted. I've removed this task:\n" + task);
+
         }
 
         @Override
@@ -281,13 +289,13 @@ public interface Command {
         }
 
         @Override
-        public void execute(TaskList tasks, Ui ui, Storage storage) throws BarryException, IOException {
-            ArrayList<Task> answer  = tasks.findTasks(this.searchTerm);
+        public String execute(TaskList tasks, Ui ui, Storage storage) throws BarryException, IOException {
+            ArrayList<Task> answer = tasks.findTasks(this.searchTerm);
             String message = "I've found the following tasks with your given searchterm:\n";
             for (Task task : answer) {
                 message += task.toString() + "\n";
             }
-            ui.showMessage(message);
+            return ui.showMessage(message);
         }
 
         @Override

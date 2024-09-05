@@ -15,19 +15,19 @@ public class Ui {
         return scanner.nextLine();
     }
 
-    public void showWelcomeMessage() {
-        System.out.println("Hello! I'm Barry.\nWhat can I do for you?\n");
+    public String showWelcomeMessage() {
+        return("Hello! I'm Barry.\nWhat can I do for you?\n");
     }
 
-    public void showGoodbyeMessage() {
-        System.out.println("Bye. See you soon!\n");
+    public String showGoodbyeMessage() {
+        return("Bye. See you soon!\n");
     }
 
-    public void showMessage(String message) {
-        System.out.println(message + "\n");
+    public String showMessage(String message) {
+        return(message + "\n");
     }
 
-    public void showLoadingError() {
-        System.out.println("An error occurred while loading tasks from the file.\n");
+    public String showLoadingError() {
+        return("An error occurred while loading tasks from the file.\n");
     }
 }
