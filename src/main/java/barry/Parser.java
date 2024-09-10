@@ -57,6 +57,8 @@ public class Parser {
             case "delete":
                 assert isInteger(arguments) : "Arguments for 'delete' command should be an integer";  // Assumption that the argument for delete is a valid integer
                 return new Command.DeleteCommand(Integer.parseInt(arguments));
+            case "help":
+                return new Command.HelpCommand();
             default:
                 throw new BarryException("I'm sorry, but I don't know what that means :-(");
         }
