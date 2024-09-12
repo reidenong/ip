@@ -34,3 +34,6 @@ From adding tasks to keeping track of your progress, Barry is the task manager t
 ---
 
 Barry is more than just a task manager; it's a personal assistant that helps you stay organized, productive, and on track with your goals.
+
+## Coding Standard
+Barry is compliant with several Java best practices and coding standards, namely the ones enforced by the CS2103T course.
