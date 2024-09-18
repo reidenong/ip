@@ -3,8 +3,10 @@ package barry;
 import java.util.ArrayList;
 
 /**
- * The TaskList class manages a collection of tasks, providing methods to add, remove,
- * retrieve, and modify tasks in the list. It also supports operations to mark tasks
+ * The TaskList class manages a collection of tasks, providing methods to add,
+ * remove,
+ * retrieve, and modify tasks in the list. It also supports operations to mark
+ * tasks
  * as completed or uncompleted.
  */
 public class TaskList {
@@ -15,6 +17,7 @@ public class TaskList {
      */
     public TaskList() {
         this.taskList = new ArrayList<>();
+        assert this.taskList != null : "Task list should not be null after initialization.";
     }
 
     /**
@@ -24,6 +27,7 @@ public class TaskList {
      */
     public TaskList(ArrayList<Task> initialTasks) {
         this.taskList = initialTasks;
+        assert this.taskList != null : "Task list should not be null after initialization with initial tasks.";
     }
 
     /**
@@ -32,6 +36,7 @@ public class TaskList {
      * @return The list of tasks in this TaskList.
      */
     public ArrayList<Task> getTasks() {
+        assert taskList != null : "Task list should not be null when retrieving tasks.";
         return this.taskList;
     }
 
@@ -41,6 +46,7 @@ public class TaskList {
      * @param newTask The task to be added.
      */
     public void addTask(Task newTask) {
+        assert newTask != null : "New task should not be null when adding to the list.";
         taskList.add(newTask);
     }
 
@@ -51,6 +57,7 @@ public class TaskList {
      * @throws BarryException If the index is out of the range of the task list.
      */
     public void removeTask(int taskIndex) throws BarryException {
+        assert taskIndex >= 0 : "Task index should not be negative.";
         if (taskIndex < 0 || taskIndex >= taskList.size()) {
             throw new BarryException("Task number is out of range.");
         }
@@ -65,6 +72,7 @@ public class TaskList {
      * @throws BarryException If the index is out of the range of the task list.
      */
     public Task getTask(int taskIndex) throws BarryException {
+        assert taskIndex >= 0 : "Task index should not be negative.";
         if (taskIndex < 0 || taskIndex >= taskList.size()) {
             throw new BarryException("Task number is out of range.");
         }
@@ -78,7 +86,9 @@ public class TaskList {
      * @throws BarryException If the index is out of the range of the task list.
      */
     public void markTask(int taskIndex) throws BarryException {
+        assert taskIndex >= 0 : "Task index should not be negative.";
         Task taskToMark = getTask(taskIndex);
+        assert taskToMark != null : "Task to be marked should not be null.";
         taskToMark.mark();
     }
 
@@ -89,7 +99,9 @@ public class TaskList {
      * @throws BarryException If the index is out of the range of the task list.
      */
     public void unmarkTask(int taskIndex) throws BarryException {
+        assert taskIndex >= 0 : "Task index should not be negative.";
         Task taskToUnmark = getTask(taskIndex);
+        assert taskToUnmark != null : "Task to be unmarked should not be null.";
         taskToUnmark.unmark();
     }
 
@@ -100,6 +112,7 @@ public class TaskList {
      * @return A list of tasks that match the search term.
      */
     public ArrayList<Task> findTasks(String searchTerm) {
+        assert searchTerm != null && !searchTerm.isEmpty() : "Search term should not be null or empty.";
         ArrayList<Task> matchingTasks = new ArrayList<>();
         for (Task task : this.taskList) {
             if (task.getDescription().contains(searchTerm)) {
