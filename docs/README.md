@@ -8,27 +8,47 @@
 
 Barry allows you to add different types of tasks to your list:
 
-- **To-Do Task**: A basic task that needs to be completed.
-- **Deadline Task**: A task with a specific due date.
-- **Event Task**: A task that spans a period of time with a start and end date.
+- **To-Do Task**: A basic task that needs to be completed. Eg. `todo read book`
+- **Deadline Task**: A task with a specific due date. Eg. `deadline submit report /by 01/11/2024 1923`
+- **Event Task**: A task that spans a period of time with a start and end date. Eg. `event project meeting /at 01/11/2024 1923 to 01/11/2024 2023`
 
 ### 2. List All Tasks
+
+```
+list
+```
 
 With a simple command, Barry will list all your tasks. It doesn't matter how many tasks you have; Barry will make sure you can see them all at once, making it easy to stay on top of things.
 
 ### 3. Mark and Unmark Tasks
 
+```
+mark 2
+```
+
 Keep track of what you've done by marking tasks as completed. If you accidentally mark something as done, you can easily unmark it, and Barry will update your task list accordingly.
 
 ### 4. Delete Tasks
+
+```
+delete 1
+```
 
 Need to clear out completed or unnecessary tasks? Barry can remove tasks from your list, helping you maintain a clutter-free to-do list.
 
 ### 5. Find Tasks
 
+```
+find work
+```
+
 Searching for a specific task? Barry has a powerful search feature that allows you to quickly find tasks using keywords. This feature is handy when you're juggling many tasks and need to find something quickly.
 
 ### 6. Exit Command
+
+```
+bye
+```
 
 When you're done for the day, you can instruct Barry to exit the application. Barry will politely bid you farewell until your next session.
 
