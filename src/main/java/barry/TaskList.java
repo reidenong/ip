@@ -1,23 +1,22 @@
 package barry;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The TaskList class manages a collection of tasks, providing methods to add,
- * remove,
- * retrieve, and modify tasks in the list. It also supports operations to mark
- * tasks
- * as completed or uncompleted.
+ * remove, retrieve, and modify tasks in the list. It also supports operations
+ * to mark
+ * tasks as completed or uncompleted.
  */
 public class TaskList {
-    private ArrayList<Task> taskList;
+    private final List<Task> tasks;
 
     /**
      * Constructs an empty TaskList.
      */
     public TaskList() {
-        this.taskList = new ArrayList<>();
-        assert this.taskList != null : "Task list should not be null after initialization.";
+        this.tasks = new ArrayList<>();
     }
 
     /**
@@ -25,9 +24,9 @@ public class TaskList {
      *
      * @param initialTasks The initial list of tasks to be managed by this TaskList.
      */
-    public TaskList(ArrayList<Task> initialTasks) {
-        this.taskList = initialTasks;
-        assert this.taskList != null : "Task list should not be null after initialization with initial tasks.";
+    public TaskList(final List<Task> initialTasks) {
+        this.tasks = new ArrayList<>(initialTasks); // Defensive copy
+        assert !tasks.isEmpty() : "Initial task list should not be empty.";
     }
 
     /**
@@ -35,9 +34,8 @@ public class TaskList {
      *
      * @return The list of tasks in this TaskList.
      */
-    public ArrayList<Task> getTasks() {
-        assert taskList != null : "Task list should not be null when retrieving tasks.";
-        return this.taskList;
+    public List<Task> getTasks() {
+        return new ArrayList<>(tasks); // Defensive copy to avoid modification
     }
 
     /**
@@ -45,23 +43,20 @@ public class TaskList {
      *
      * @param newTask The task to be added.
      */
-    public void addTask(Task newTask) {
-        assert newTask != null : "New task should not be null when adding to the list.";
-        taskList.add(newTask);
+    public void addTask(final Task newTask) {
+        assert newTask != null : "New task should not be null.";
+        tasks.add(newTask);
     }
 
     /**
      * Removes a task at the specified index from the list.
      *
      * @param taskIndex The index of the task to be removed.
-     * @throws BarryException If the index is out of the range of the task list.
+     * @throws BarryException If the index is out of range of the task list.
      */
-    public void removeTask(int taskIndex) throws BarryException {
-        assert taskIndex >= 0 : "Task index should not be negative.";
-        if (taskIndex < 0 || taskIndex >= taskList.size()) {
-            throw new BarryException("Task number is out of range.");
-        }
-        taskList.remove(taskIndex);
+    public void removeTask(final int taskIndex) throws BarryException {
+        validateTaskIndex(taskIndex);
+        tasks.remove(taskIndex);
     }
 
     /**
@@ -69,40 +64,33 @@ public class TaskList {
      *
      * @param taskIndex The index of the task to retrieve.
      * @return The task at the specified index.
-     * @throws BarryException If the index is out of the range of the task list.
+     * @throws BarryException If the index is out of range of the task list.
      */
-    public Task getTask(int taskIndex) throws BarryException {
-        assert taskIndex >= 0 : "Task index should not be negative.";
-        if (taskIndex < 0 || taskIndex >= taskList.size()) {
-            throw new BarryException("Task number is out of range.");
-        }
-        return taskList.get(taskIndex);
+    public Task getTask(final int taskIndex) throws BarryException {
+        validateTaskIndex(taskIndex);
+        return tasks.get(taskIndex);
     }
 
     /**
      * Marks the task at the specified index as completed.
      *
      * @param taskIndex The index of the task to be marked as completed.
-     * @throws BarryException If the index is out of the range of the task list.
+     * @throws BarryException If the index is out of range of the task list.
      */
-    public void markTask(int taskIndex) throws BarryException {
-        assert taskIndex >= 0 : "Task index should not be negative.";
-        Task taskToMark = getTask(taskIndex);
-        assert taskToMark != null : "Task to be marked should not be null.";
-        taskToMark.mark();
+    public void markTask(final int taskIndex) throws BarryException {
+        Task task = getTask(taskIndex);
+        task.mark();
     }
 
     /**
      * Unmarks the task at the specified index as not completed.
      *
      * @param taskIndex The index of the task to be marked as not completed.
-     * @throws BarryException If the index is out of the range of the task list.
+     * @throws BarryException If the index is out of range of the task list.
      */
-    public void unmarkTask(int taskIndex) throws BarryException {
-        assert taskIndex >= 0 : "Task index should not be negative.";
-        Task taskToUnmark = getTask(taskIndex);
-        assert taskToUnmark != null : "Task to be unmarked should not be null.";
-        taskToUnmark.unmark();
+    public void unmarkTask(final int taskIndex) throws BarryException {
+        Task task = getTask(taskIndex);
+        task.unmark();
     }
 
     /**
@@ -111,10 +99,10 @@ public class TaskList {
      * @param searchTerm The term to search for.
      * @return A list of tasks that match the search term.
      */
-    public ArrayList<Task> findTasks(String searchTerm) {
+    public List<Task> findTasks(final String searchTerm) {
         assert searchTerm != null && !searchTerm.isEmpty() : "Search term should not be null or empty.";
-        ArrayList<Task> matchingTasks = new ArrayList<>();
-        for (Task task : this.taskList) {
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
             if (task.getDescription().contains(searchTerm)) {
                 matchingTasks.add(task);
             }
@@ -128,7 +116,7 @@ public class TaskList {
      * @return true if the task list is empty, false otherwise.
      */
     public boolean isEmpty() {
-        return taskList.isEmpty();
+        return tasks.isEmpty();
     }
 
     /**
@@ -137,6 +125,18 @@ public class TaskList {
      * @return The number of tasks in the task list.
      */
     public int size() {
-        return taskList.size();
+        return tasks.size();
+    }
+
+    /**
+     * Validates that the given task index is within the bounds of the task list.
+     *
+     * @param taskIndex The index to be validated.
+     * @throws BarryException If the index is out of the valid range.
+     */
+    private void validateTaskIndex(final int taskIndex) throws BarryException {
+        if (taskIndex < 0 || taskIndex >= tasks.size()) {
+            throw new BarryException("Task index is out of range.");
+        }
     }
 }
