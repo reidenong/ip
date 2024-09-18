@@ -8,7 +8,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 /**
- * A GUI for Duke using FXML.
+ * A GUI for Barry using FXML.
  */
 public class Main extends Application {
 
@@ -21,7 +21,7 @@ public class Main extends Application {
             AnchorPane ap = fxmlLoader.load();
             Scene scene = new Scene(ap);
             stage.setScene(scene);
-            fxmlLoader.<MainWindow>getController().setDuke(barry);  // inject the Duke instance
+            fxmlLoader.<MainWindow>getController().setBarry(barry);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

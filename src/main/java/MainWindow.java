@@ -23,21 +23,21 @@ public class MainWindow extends AnchorPane {
     private Barry barry;
 
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/pfp.png"));
-    private Image dukeImage = new Image(this.getClass().getResourceAsStream("/images/cat.png"));
+    private Image barryImage = new Image(this.getClass().getResourceAsStream("/images/cat.png"));
 
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
     }
 
-    /** Injects the Duke instance */
-    public void setDuke(Barry b) {
+    /** Injects the Barry instance */
+    public void setBarry(Barry b) {
         this.barry = b;
     }
 
     /**
      * Creates two dialog boxes, one echoing user input and the other containing
-     * Duke's reply and then appends them to
+     * Barry's reply and then appends them to
      * the dialog container. Clears the user input after processing.
      */
     @FXML
@@ -47,7 +47,7 @@ public class MainWindow extends AnchorPane {
         String response = this.barry.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getDukeDialog(response, dukeImage));
+                DialogBox.getBarryDialog(response, barryImage));
         userInput.clear();
     }
 }
