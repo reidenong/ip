@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * The Storage class is responsible for reading and writing tasks to and from a file.
- * It provides methods to load tasks from a specified file and to save tasks back to the file.
+ * The Storage class is responsible for reading and writing tasks to and from a
+ * file.
+ * It provides methods to load tasks from a specified file and to save tasks
+ * back to the file.
  */
 public class Storage {
     private String filePath;
@@ -30,6 +32,7 @@ public class Storage {
     public ArrayList<Task> load() throws FileNotFoundException {
         ArrayList<Task> tasks = new ArrayList<>();
         File file = new File(filePath);
+
         if (!file.exists()) {
             return tasks;
         }
@@ -61,8 +64,25 @@ public class Storage {
 
                 tasks.add(task);
             }
-        } catch (FileNotFoundException e) {
-            throw new FileNotFoundException("File not found.");
+        } catch (ArrayIndexOutOfBoundsException | IOException e) {
+            // Error handling for corrupted or unreadable file content
+            System.err.println("Error loading tasks from file: " + e.getMessage());
+
+            // Delete the corrupted file
+            if (file.delete()) {
+                System.err.println("Corrupted file deleted: " + filePath);
+            } else {
+                System.err.println("Failed to delete the corrupted file: " + filePath);
+            }
+
+            // Create a new file
+            try {
+                if (file.createNewFile()) {
+                    System.err.println("New empty file created: " + filePath);
+                }
+            } catch (IOException ioException) {
+                System.err.println("Failed to create new file: " + ioException.getMessage());
+            }
         }
 
         return tasks;
@@ -81,10 +101,12 @@ public class Storage {
                     writer.println("T | " + (task.isCompleted() ? "1" : "0") + " | " + task.getDescription());
                 } else if (task instanceof Task.DeadlineTask) {
                     Task.DeadlineTask deadlineTask = (Task.DeadlineTask) task;
-                    writer.println("D | " + (task.isCompleted() ? "1" : "0") + " | " + task.getDescription() + " | " + deadlineTask.getBy());
+                    writer.println("D | " + (task.isCompleted() ? "1" : "0") + " | " + task.getDescription() + " | "
+                            + deadlineTask.getBy());
                 } else if (task instanceof Task.EventTask) {
                     Task.EventTask eventTask = (Task.EventTask) task;
-                    writer.println("E | " + (task.isCompleted() ? "1" : "0") + " | " + task.getDescription() + " | " + eventTask.getFrom() + " | " + eventTask.getTo());
+                    writer.println("E | " + (task.isCompleted() ? "1" : "0") + " | " + task.getDescription() + " | "
+                            + eventTask.getFrom() + " | " + eventTask.getTo());
                 }
             }
         }

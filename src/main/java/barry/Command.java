@@ -42,6 +42,7 @@ public interface Command {
 
         @Override
         public String execute(TaskList tasks, Ui ui, Storage storage) {
+            System.exit(0);
             return ui.showGoodbyeMessage();
         }
 
@@ -305,35 +306,35 @@ public interface Command {
     }
 
     /**
- * Represents the command to display a list of all available commands.
- */
-public static class HelpCommand implements Command {
-
-    /**
-     * Constructs a HelpCommand.
+     * Represents the command to display a list of all available commands.
      */
-    public HelpCommand() {
-    }
+    public static class HelpCommand implements Command {
 
-    @Override
-    public String execute(TaskList tasks, Ui ui, Storage storage) {
-        String helpMessage = "Here are the available commands:\n"
-            + "1. list - List all tasks\n"
-            + "2. mark [task number] - Mark a task as done\n"
-            + "3. unmark [task number] - Unmark a task as not done\n"
-            + "4. todo [description] - Add a new todo task\n"
-            + "5. deadline [description] /by [d/M/yyyy HHmm] - Add a new deadline task\n"
-            + "6. event [description] /from [d/M/yyyy HHmm] /to [d/M/yyyy HHmm] - Add a new event task\n"
-            + "7. delete [task number] - Delete a task\n"
-            + "8. find [keyword] - Find tasks with the specified keyword\n"
-            + "9. bye - Exit the application\n"
-            + "10. help - Display this list of commands";
-        return ui.showMessage(helpMessage);
-    }
+        /**
+         * Constructs a HelpCommand.
+         */
+        public HelpCommand() {
+        }
 
-    @Override
-    public boolean isExit() {
-        return false;
+        @Override
+        public String execute(TaskList tasks, Ui ui, Storage storage) {
+            String helpMessage = "Here are the available commands:\n"
+                    + "1. list - List all tasks\n"
+                    + "2. mark [task number] - Mark a task as done\n"
+                    + "3. unmark [task number] - Unmark a task as not done\n"
+                    + "4. todo [description] - Add a new todo task\n"
+                    + "5. deadline [description] /by [d/M/yyyy HHmm] - Add a new deadline task\n"
+                    + "6. event [description] /from [d/M/yyyy HHmm] /to [d/M/yyyy HHmm] - Add a new event task\n"
+                    + "7. delete [task number] - Delete a task\n"
+                    + "8. find [keyword] - Find tasks with the specified keyword\n"
+                    + "9. bye - Exit the application\n"
+                    + "10. help - Display this list of commands";
+            return ui.showMessage(helpMessage);
+        }
+
+        @Override
+        public boolean isExit() {
+            return false;
+        }
     }
-}
 }
