@@ -32,11 +32,31 @@ public class Storage {
     public ArrayList<Task> load() throws FileNotFoundException {
         ArrayList<Task> tasks = new ArrayList<>();
         File file = new File(filePath);
+        File directory = file.getParentFile(); // Get the parent directory of the file
 
-        if (!file.exists()) {
-            return tasks;
+        // Check if the directory exists, if not, create it
+        if (directory != null && !directory.exists()) {
+            if (directory.mkdirs()) {
+                System.err.println("Directory created: " + directory.getAbsolutePath());
+            } else {
+                System.err.println("Failed to create directory: " + directory.getAbsolutePath());
+            }
         }
 
+        // If the file doesn't exist, return an empty list (tasks) and create the file
+        if (!file.exists()) {
+            try {
+                if (file.createNewFile()) {
+                    System.err.println("New file created: " + filePath);
+                }
+            } catch (IOException e) {
+                System.err.println("Failed to create new file: " + e.getMessage());
+                return tasks; // Return the empty list if file creation fails
+            }
+            return tasks; // Return empty list since no tasks can be loaded
+        }
+
+        // File exists, proceed with loading tasks
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
                 String[] parts = scanner.nextLine().split(" \\| ");
