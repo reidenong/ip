@@ -52,7 +52,7 @@ public class DialogBox extends HBox {
         return new DialogBox(text, img);
     }
 
-    public static DialogBox getBarryDialog(String text, Image img) {
+    public static DialogBox getDialogBox(String text, Image img) {
         var db = new DialogBox(text, img);
         db.flip();
         return db;
