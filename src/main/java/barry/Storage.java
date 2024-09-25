@@ -65,11 +65,16 @@ public class Storage {
                 String description = parts[2];
                 Task task;
 
+                // Describes a todo task
                 if (type.equals("T")) {
                     task = new Task.TodoTask(description);
+
+                    // Describes a deadline task
                 } else if (type.equals("D")) {
                     LocalDateTime by = LocalDateTime.parse(parts[3]);
                     task = new Task.DeadlineTask(description, by);
+
+                    // Describes an event task
                 } else if (type.equals("E")) {
                     LocalDateTime from = LocalDateTime.parse(parts[3]);
                     LocalDateTime to = LocalDateTime.parse(parts[4]);
