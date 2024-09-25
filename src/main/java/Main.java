@@ -14,6 +14,11 @@ public class Main extends Application {
 
     private Barry barry = new Barry("data/tasks.txt");
 
+    /**
+     * Starts the application.
+     *
+     * @param stage The stage to start the application on.
+     */
     @Override
     public void start(Stage stage) {
         try {
